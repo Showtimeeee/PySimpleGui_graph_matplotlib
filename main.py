@@ -3,6 +3,18 @@ import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
+
+def update_par(data):
+    axes = fig.axes
+    x = [i[0] for i in data]
+    y = [int(i[1]) for i in data]
+    axes[0].plot(x, y, 'b-')
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack()
+
+
+
+
 sg.theme("LightBlue")
 table_content = []
 maket = [
@@ -16,7 +28,8 @@ maket = [
     [sg.Canvas(key='-CANVAS-')]
 ]
 
-window = sg.Window('Quick Graph', maket)
+# gui + graph
+window = sg.Window('Quick Graph', maket, finalize=True)
 
 # matplotlib
 fig = matplotlib.figure.Figure(figsize=(5, 5))
@@ -30,6 +43,14 @@ while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
+
+    if event == 'Принять':
+        new_value = values['-INPUT-']
+        if new_value.isnumeric():
+            table_content.append([len(table_content) + 1, float(new_value)])
+            window['-TABLE-'].update(table_content)
+            window['-INPUT-'].update('')
+            update_par(table_content)
 
 window.close()
 
